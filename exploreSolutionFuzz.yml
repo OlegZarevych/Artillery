@@ -1,0 +1,19 @@
+config:
+  target: "https://exploresolutionapi.azurewebsites.net:443"
+  plugins:  
+    fuzzer: {}
+  defaults:
+    headers:
+      Content-Type: "application/json"
+  phases:
+    - duration: 30
+      arrivalRate: 1
+scenarios:
+  - name: "Fuzz : Get All Tours"
+    flow:
+      - post:
+          url: "/api/Authentication/request"
+          json:
+            username: "{{ naughtyString }}"
+            password: "{{ naughtyString }}"
+      - log: "***** naughtyString = {{ naughtyString }}"

@@ -1,0 +1,15 @@
+  config:
+    target: "wss://my.websocket.service"
+    phases:
+      - duration: 20
+        arrivalRate: 10
+    ws:
+      # Set a custom subprotocol:
+      subprotocols:
+        - json
+  scenarios:
+    - engine: "ws"
+      flow:
+        - send: "hello"
+        - think: 1
+        - send: "world"

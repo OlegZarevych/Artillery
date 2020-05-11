@@ -1,0 +1,69 @@
+config:
+  target: "https://exploresolutionapi.azurewebsites.net:443"
+  plugins:
+    expect: {}
+  defaults:
+    headers:
+      Content-Type: "application/json"
+  ensure:
+    #p95: 20000
+    maxErrorRate: 1
+  phases:
+    - duration: 10
+      arrivalRate: 1
+    # - duration: 10
+    #   arrivalRate: 5
+    #   rampTo: 50
+    # # - duration: 600
+    #   arrivalRate: 50
+  payload:
+    path: "data.csv"
+    fields:
+      - "count"
+      - "userNameVariable"
+      - "userPasswordVariable"
+    order: random
+    skipHeader: true
+  # variables:
+  # userNameVariable:
+  # - "user"
+  # userPasswordVariable:
+  # - "pass"
+scenarios:
+  - name: "Get All Tours"
+    flow:
+      - post:
+          url: "/api/Authentication/request"
+          # headers:
+          #   Content-Type: "application/json"
+          body: "{\"username\":\"{{ userNameVariable }}\",\"password\": \"{{ userPasswordVariable }}\"}"
+          capture:
+            regexp: ".*"
+            as: "token"
+      - think: 3
+      # - get:
+      #     url: "/api/tours/getAll"
+      #     headers:
+      #       Authorization : "Bearer {{ token }}"
+      #     expect:
+      #       - statusCode: 200
+      #       - contentType: json
+      #       - hasHeader: content-type
+            #- hasProperty: $[0].tourId
+            #- hasProperty: tourId
+      # - loop:
+      #   - get:
+      #       url: "/api/tours/getAll"
+      #       headers:
+      #         Authorization : "Bearer {{ token }}"
+      #   count: 2
+      - loop:
+        - get:
+            name: "Loop {{ $loopElement }}"
+            url: "/api/tours/{{ $loopElement }}"
+            headers:
+              Authorization : "Bearer {{ token }}"
+        over:
+          - 1
+          - 2
+          - 3

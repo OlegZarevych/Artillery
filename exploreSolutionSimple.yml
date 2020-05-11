@@ -1,0 +1,22 @@
+config:
+  target: "https://exploresolutionapi.azurewebsites.net:443"
+  phases:
+    - duration: 10
+      arrivalRate: 1
+
+scenarios:
+  - name: "Get All Tours"
+    flow:
+      - post:
+          url: "/api/Authentication/request"
+          headers:
+            Content-Type: "application/json"
+          body: "{\"username\":\"username\",\"password\": \"pass\"}"
+          capture:
+            regexp: ".*"
+            as: "token"
+      - think: 3
+      - get:
+          url: "/api/tours/getAll"
+          headers:
+            Authorization : "Bearer {{ token }}"
